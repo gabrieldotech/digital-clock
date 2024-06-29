@@ -6,8 +6,7 @@ from time import strftime
 root = Tk()
 root.title("Relógio")
 
-# Lista de fusos horários disponíveis na América sem o prefixo "America/"
-# Nomes formatados para exibição (sem underscores)
+# lista de fusos horários disponíveis
 timezones = {
     "São Paulo": "Sao_Paulo", 
     "New York": "New_York", 
@@ -17,51 +16,49 @@ timezones = {
     "Lima": "Lima"
 }
 
-# Função para obter o horário atual de uma zona específica
+# função para o horário atual de uma zona
 def get_time(city):
-    timezone = f"America/{timezones[city]}"  # Mapeia para o nome esperado pela API
+    timezone = f"America/{timezones[city]}"  
     url = f"http://worldtimeapi.org/api/timezone/{timezone}"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
         datetime = data['datetime']
-        time = datetime[11:19]  # Extraindo apenas a parte de horas, minutos e segundos
+        time = datetime[11:19]  #
         return time
     else:
         return "Erro"
 
-# Definindo uma função para atualizar o relógio
+# atualizar o relógio
 def watch():
     city = timezone_var.get()
     horario = get_time(city)
     label.config(text=horario)
     label.after(1000, watch)
 
-# Configurando o estilo da janela e da fonte
-root.geometry("800x400")  # Tamanho da janela
-root.configure(bg="#1E1E1E")  # Cor de fundo da janela (preto escuro)
+# estilo da janela e da fonte
+root.geometry("800x400")  
+root.configure(bg="#1E1E1E")  
 
-# Criando uma label com estilo personalizado
-label = Label(root, font=("DS-Digital", 100), background="#1E1E1E", foreground="#00FF04")  # Texto branco sobre fundo preto
+# estilo da label
+label = Label(root, font=("DS-Digital", 100), background="#1E1E1E", foreground="#00FF04") 
 label.pack(anchor="center", expand=True)
 
-# Adicionando um dropdown para selecionar o fuso horário
-timezone_var = StringVar(value=list(timezones.keys())[0])  # Fuso horário padrão
+# dropdown para selecionar o fuso
+timezone_var = StringVar(value=list(timezones.keys())[0])  
 
-# Estilizando o Combobox
+# estilo combobox
 style = Style()
 style.configure("TCombobox",
-                fieldbackground="#2B2B2B",  # Fundo do campo de entrada do Combobox (cinza escuro)
-                background="#2B2B2B",       # Fundo do menu suspenso do Combobox (cinza escuro)
-                foreground="#111",       # Texto branco
-                font=("Helvetica", 20),
-                arrowcolor="#FFFFFF")       # Cor da seta (branca)
+fieldbackground="#2B2B2B", 
+background="#2B2B2B",      
+foreground="#111",       
+font=("Helvetica", 20),
+arrowcolor="#FFFFFF")      
 
 dropdown = Combobox(root, textvariable=timezone_var, values=list(timezones.keys()), font=("Helvetica", 20), style="TCombobox")
 dropdown.pack(pady=20)
 
-# Iniciando a função watch
 watch()
 
-# Mantendo a janela aberta
 root.mainloop()
